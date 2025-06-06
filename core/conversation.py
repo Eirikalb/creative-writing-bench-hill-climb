@@ -16,7 +16,8 @@ class CreativeWritingTask:
         seed_modifiers: List[str],
         iteration_index: int,
         test_model: str,
-        judge_model: str
+        judge_model: str,
+        system_prompt: str = None
     ):
         self.prompt_id = prompt_id
         self.base_prompt = base_prompt
@@ -24,6 +25,7 @@ class CreativeWritingTask:
         self.iteration_index = iteration_index
         self.test_model = test_model
         self.judge_model = judge_model
+        self.system_prompt = system_prompt
 
         self.status = "initialized"
         self.start_time = None
@@ -59,7 +61,15 @@ class CreativeWritingTask:
             max_attempts = 3
             for attempt in range(1, max_attempts + 1):
                 try:
-                    response = test_api.generate(self.test_model, final_prompt, temperature=0.7, max_tokens=4000, min_p=0.1, include_seed=False)
+                    response = test_api.generate(
+                        self.test_model, 
+                        final_prompt, 
+                        temperature=0.7, 
+                        max_tokens=4000, 
+                        min_p=0.1, 
+                        include_seed=False,
+                        system_prompt=self.system_prompt
+                    )
                     
                     # Check if response is too short
                     if len(response.strip()) < 500:
@@ -183,6 +193,7 @@ class CreativeWritingTask:
             "iteration_index": self.iteration_index,
             "test_model": self.test_model,
             "judge_model": self.judge_model,
+            "system_prompt": self.system_prompt,
             "status": self.status,
             "start_time": self.start_time,
             "end_time": self.end_time,
@@ -198,7 +209,8 @@ class CreativeWritingTask:
             seed_modifiers=data["seed_modifiers"],
             iteration_index=data.get("iteration_index", 0),
             test_model=data["test_model"],
-            judge_model=data["judge_model"]
+            judge_model=data["judge_model"],
+            system_prompt=data.get("system_prompt")
         )
         obj.status = data.get("status", "initialized")
         obj.start_time = data.get("start_time")

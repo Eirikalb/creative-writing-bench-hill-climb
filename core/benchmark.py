@@ -184,7 +184,8 @@ def run_eq_bench_creative(
     redo_judging: bool = False,
     save_interval: int = 2,
     iterations: int = 1,
-    run_elo: bool = True
+    run_elo: bool = True,
+    system_prompt: str = None
 ) -> str:
     """
     Main function to run the creative writing benchmark.
@@ -322,7 +323,8 @@ def run_eq_bench_creative(
                     seed_modifiers=[iteration_seed],
                     iteration_index=i,
                     test_model=test_model,
-                    judge_model=judge_model
+                    judge_model=judge_model,
+                    system_prompt=system_prompt
                 )
                 tasks_to_run.append(new_task)
 
@@ -447,7 +449,8 @@ def run_eq_bench_creative(
                 concurrency=num_threads,
                 pairwise_prompt_file="data/pairwise_prompt.txt",
                 negative_criteria=negative_criteria,
-                creative_bench_runs_file=runs_file # Pass the path to the runs file
+                creative_bench_runs_file=runs_file, # Pass the path to the runs file
+                system_prompt=system_prompt
             )
 
             # Fetch and report the normalized ELO score

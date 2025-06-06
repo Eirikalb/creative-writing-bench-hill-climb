@@ -40,11 +40,17 @@ class APIClient:
 
         logging.debug(f"Initialized {self.model_type} API client with URL: {self.base_url}")
 
-    def generate(self, model: str, prompt: str, temperature: float = 0.0, max_tokens: int = 8096, include_seed=True, min_p = 0.1) -> str:
+    def generate(self, model: str, prompt: str, temperature: float = 0.0, max_tokens: int = 8096, include_seed=True, min_p = 0.1, system_prompt: str = None) -> str:
         """
         Generic chat-completion style call.  We allow an optional random seed block.
         """
-        messages = [{"role": "user", "content": prompt}]
+        messages = []
+        
+        # Add system prompt if provided
+        if system_prompt:
+            messages.append({"role": "system", "content": system_prompt})
+            
+        messages.append({"role": "user", "content": prompt})
 
         # Optionally add random seed block as a system message for judging tasks.
         # This allows us to get variation between iterations without using temp > 0 which compromises judging performance.
